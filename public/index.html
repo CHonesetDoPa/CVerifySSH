@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH密钥验证 - 人机验证系统</title>
+    
+    <!-- Material-UI CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mui/material@5.14.0/dist/material-ui.min.css" rel="stylesheet">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-nav">
+                <a href="/self-test.html" class="nav-link self-test">
+                    <i class="material-icons icon">build</i>
+                    系统自检测
+                </a>
+            </div>
+            <h1><i class="material-icons icon">security</i>SSH密钥验证</h1>
+            <p>基于SSH密钥签名的人机验证系统</p>
+        </div>
+        
+        <div class="content">
+            <!-- 步骤1: 获取挑战 -->
+            <div class="step active" id="step1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">获取验证挑战</div>
+                </div>
+                <p>点击下方按钮获取需要签名的挑战消息。</p><br>
+                <button class="btn" onclick="getChallenge()" id="getChallengeBtn">
+                    <i class="material-icons icon">play_arrow</i>获取挑战
+                </button>
+                <button class="btn btn-secondary" onclick="checkStatus()">
+                    <i class="material-icons icon">info</i>服务器状态
+                </button>
+                <button onclick="window.location.href='/login.html'" class="btn btn-secondary login-link">
+                    <i class="material-icons icon">login</i>
+                    SSH登录
+                </button><br>
+            </div>
+            
+            <!-- 步骤2: 执行签名命令 -->
+            <div class="step" id="step2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">执行签名命令</div>
+                </div>
+                <p>在终端中执行以下命令对消息进行签名：</p>
+                <div class="command-box" id="commandBox" style="display: none;">
+                    <button class="copy-btn" onclick="copyCommand()">复制</button>
+                    <div id="command"></div>
+                </div>
+                <div class="alert alert-info" style="display: none;" id="commandInfo">
+                    <strong>注意：</strong>请将命令中的 <code>your-private-key</code> 替换为您的SSH私钥文件名（如 <code>id_rsa</code>、<code>id_ed25519</code> 等）。
+                </div>
+            </div>
+            
+            <!-- 步骤3: 提交验证信息 -->
+            <div class="step" id="step3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">提交验证信息</div>
+                </div>
+                <p>请提供您的SSH公钥和生成的签名：</p>
+                
+                <div class="form-group">
+                    <label for="publicKey">
+                        <i class="material-icons icon">vpn_key</i>SSH公钥（来自 ~/.ssh/your-key.pub）：
+                    </label>
+                    <textarea id="publicKey" placeholder="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB... 或 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signature">
+                        <i class="material-icons icon">edit</i>签名（来自上述命令的输出）：
+                    </label>
+                    <textarea id="signature" placeholder="-----BEGIN SSH SIGNATURE-----&#10;U1NIU0lH...&#10;-----END SSH SIGNATURE-----"></textarea>
+                </div>
+                
+                <button class="btn" onclick="verifySignature()" id="verifyBtn" disabled>
+                    <i class="material-icons icon">verified_user</i>验证签名
+                </button>
+            </div>
+            
+            <!-- 结果显示 -->
+            <div id="resultArea"></div>
+            
+            <!-- 状态面板 -->
+            <div class="status-panel">
+                <h3><i class="material-icons icon">dashboard</i>系统状态</h3>
+                <div class="status-item">
+                    <span class="status-label">服务器状态</span>
+                    <span class="status-value" id="serverStatus">检查中...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">当前挑战ID</span>
+                    <span class="status-value" id="currentChallenge">无</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">最后更新</span>
+                    <span class="status-value" id="lastUpdate">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH密钥登录 - 安全身份验证</title>
+    
+    <!-- Material-UI CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- 登录页面样式 -->
+    <link rel="stylesheet" href="login-styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="material-icons">security</i>
+                </div>
+                <h1>安全登录</h1>
+                <p>使用SSH密钥进行身份验证</p>
+            </div>
+            
+            <div class="login-content">
+                <!-- 用户名输入 -->
+                <div class="form-group">
+                    <label for="username">
+                        <i class="material-icons icon">person</i>
+                        用户名
+                    </label>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
+                </div>
+                
+                <!-- SSH密钥验证区域 -->
+                <div class="verification-section" id="verificationSection" style="display: none;">
+                    <div class="verification-header">
+                        <i class="material-icons">verified_user</i>
+                        <span>SSH密钥验证</span>
+                    </div>
+                    
+                    <!-- 挑战信息 -->
+                    <div class="challenge-info" id="challengeInfo" style="display: none;">
+                        <p>请在终端中执行以下命令对登录挑战进行签名：</p>
+                        <div class="command-box" id="commandBox">
+                            <button class="copy-btn" onclick="copyCommand()">复制</button>
+                            <div id="command"></div>
+                        </div>
+                        <div class="alert alert-info">
+                            <strong>注意：</strong>请将命令中的 <code>your-private-key</code> 替换为您的SSH私钥文件名。
+                        </div>
+                    </div>
+                    
+                    <!-- SSH公钥输入 -->
+                    <div class="form-group">
+                        <label for="publicKey">
+                            <i class="material-icons icon">vpn_key</i>
+                            SSH公钥
+                        </label>
+                        <textarea id="publicKey" placeholder="粘贴您的SSH公钥（来自 ~/.ssh/your-key.pub）" rows="3"></textarea>
+                    </div>
+                    
+                    <!-- 签名输入 -->
+                    <div class="form-group">
+                        <label for="signature">
+                            <i class="material-icons icon">edit</i>
+                            签名
+                        </label>
+                        <textarea id="signature" placeholder="粘贴签名命令的输出" rows="4"></textarea>
+                    </div>
+                </div>
+                
+                <!-- 按钮区域 -->
+                <div class="button-group">
+                    <button class="btn btn-primary" id="loginBtn" onclick="initiateLogin()">
+                        <i class="material-icons icon">login</i>
+                        开始登录
+                    </button>
+                    <button class="btn btn-secondary" id="verifyBtn" onclick="verifyLogin()" style="display: none;" disabled>
+                        <i class="material-icons icon">check_circle</i>
+                        验证登录
+                    </button>
+                </div>
+                
+                <!-- 状态显示 -->
+                <div id="statusArea"></div>
+                
+                <!-- 快捷链接 -->
+                <div class="quick-links">
+                    <a href="/" class="link">
+                        <i class="material-icons">arrow_back</i>
+                        返回验证系统
+                    </a>
+                    <a href="/self-test.html" class="link">
+                        <i class="material-icons">build</i>
+                        系统自检测
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 登录成功页面 -->
+        <div class="success-page" id="successPage" style="display: none;">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="material-icons">check_circle</i>
+                </div>
+                <h2>登录成功！</h2>
+                <p id="welcomeMessage">欢迎回来！</p>
+                <div class="user-info" id="userInfo">
+                    <div class="info-item">
+                        <span class="label">用户名：</span>
+                        <span class="value" id="displayUsername"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">登录时间：</span>
+                        <span class="value" id="loginTime"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">SSH密钥类型：</span>
+                        <span class="value" id="keyType"></span>
+                    </div>
+                </div>
+                <div class="success-actions">
+                    <button class="btn btn-primary" onclick="logout()">
+                        <i class="material-icons icon">logout</i>
+                        退出登录
+                    </button>
+                    <button class="btn btn-secondary" onclick="goToDashboard()">
+                        <i class="material-icons icon">dashboard</i>
+                        进入控制台
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="login-script.js"></script>
+</body>
+</html>
