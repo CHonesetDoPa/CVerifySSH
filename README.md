@@ -79,7 +79,7 @@ SSH不只是用来连服务器的，它还有签名功能！OpenSSH 8.0+支持`s
 
 ```bash
 git clone 这个仓库
-cd VerifySSH
+cd CVerifySSH
 npm install
 npm start
 ```
